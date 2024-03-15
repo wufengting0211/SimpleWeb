@@ -1,0 +1,62 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-4.2.xsd 
+	http://www.springframework.org/schema/util  
+    http://www.springframework.org/schema/util/spring-util-4.2.xsd
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+    http://www.springframework.org/schema/data/mongo 
+    http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd">
+    
+    <!-- spring连接mongodb数据库的配置 -->  	
+	<mongo:mongo-client id="mongo" host="${mongo.ip}" port="${mongo.port}" credentials="${mongo.username}:${mongo.password}@${mongo.dbname}">
+        <mongo:client-options
+                connections-per-host="10"
+                min-connections-per-host="5"
+                threads-allowed-to-block-for-connection-multiplier="5"
+                connect-timeout="10000"
+                max-wait-time="120000"
+                socket-keep-alive="true"
+                socket-timeout="1500"
+                heartbeat-socket-timeout="1000"
+                heartbeat-connect-timeout="1500"
+                min-heartbeat-frequency="5"
+                heartbeat-frequency="10"
+        />
+    </mongo:mongo-client>
+
+    <mongo:db-factory  id="mongoDbFactory" dbname="${mongo.dbname}" mongo-ref="mongo"/>  
+    
+    <mongo:repositories base-package="com.model" />
+
+    <bean id="defaultMongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">   
+    	<constructor-arg name="typeKey"><null/></constructor-arg>   
+ 	</bean>
+ 	
+ 	<bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" /> 
+ 	
+ 	<bean id="mongoConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">   
+    	<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />   
+    	<constructor-arg name="mappingContext" ref="mappingContext" />   
+    	<property name="typeMapper" ref="defaultMongoTypeMapper" />   
+ 	</bean> 
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">    
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+		<constructor-arg name="mongoConverter" ref="mongoConverter" />
+    </bean>
+
+    
+
+    <!-- 扫描实现 -->
+    <context:annotation-config />
+</beans>

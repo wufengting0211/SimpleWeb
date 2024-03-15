@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG" monitorInterval="300">
+	
+	<properties> 
+		<property name="logDir" value="D:/weblogs/SimpleWeb" />
+	</properties>
+
+	<Appenders>
+
+		<!-- ########################==CONSOLE_Log==######################### -->
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%file:%line] %msg%n" />
+		</Console>
+
+		<!-- ########################==default_Log==######################### -->
+		<RollingRandomAccessFile name="default" fileName="${logDir}/default.log" filePattern="${logDir}/default-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%file:%line] %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="7" />
+		</RollingRandomAccessFile>
+
+		<!-- ########################==mongodb_Log==######################### -->
+		<RollingRandomAccessFile name="mongodb" fileName="${logDir}/mongodb.log" filePattern="${logDir}/mongodb-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%file:%line] %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="7" />
+		</RollingRandomAccessFile>
+		
+		<!-- ########################==infolog_Log==######################### -->
+		<RollingRandomAccessFile name="infolog" fileName="${logDir}/infolog.log" filePattern="${logDir}/infolog-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%file:%line] %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="7" />
+		</RollingRandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<logger name="org.springframework.*" level="DEBUG" additivity="true"></logger>
+        <logger name="org.mongodb.*" level="INFO"></logger>
+        <logger name="org.springframework.data.mongodb.*" level="DEBUG"></logger>
+        
+		<Logger name="infolog" level="DEBUG" additivity="false">
+			<AppenderRef ref="infolog" />
+		</Logger>
+		
+		<Logger name="mongodb" level="INFO" additivity="false">
+			<AppenderRef ref="mongodb" />
+		</Logger>
+		
+		<Logger name="default" level="DEBUG" />
+		
+		<Root level="DEBUG">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="default" />
+		</Root>
+	</Loggers>
+
+</Configuration>
